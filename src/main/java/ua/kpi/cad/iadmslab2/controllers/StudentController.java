@@ -1,4 +1,4 @@
-package ua.kpi.cad.iadmslab2;
+package ua.kpi.cad.iadmslab2.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
