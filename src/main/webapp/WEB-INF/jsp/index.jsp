@@ -42,11 +42,17 @@
             console.log("Disconnected");
         }
 
-        function sendMessage() {
-//            var from = document.getElementById('from').value; // u_id username??
-//            var text = document.getElementById('text').value; // q_id
-            // also need -> val
-            stompClient.send("/app/test", {}, JSON.stringify({'studentName': 'Mike', 'questionId': 2, 'answerValue': 0.4}));
+        function sendMessage(id) {
+            var studentName = document.getElementById('studentName').value;
+            var answerValue = document.querySelector('input[name = "' + id + '"]:checked').value;
+
+            stompClient.send("/app/test", {}, JSON.stringify(
+                {
+                    'studentName': studentName,
+                    'questionId': id,
+                    'answerValue': answerValue
+                })
+            );
         }
 
         function showMessageOut(message) {
@@ -55,6 +61,10 @@
             p.style.wordWrap = 'break-word';
             p.appendChild(document.createTextNode(message.text));
             response.appendChild(p);
+        }
+
+        function find() {
+
         }
     </script>
 </head>
@@ -79,7 +89,7 @@
     <div class="row">
         <div class="col-md-4 col-md-offset-5">
             <div>
-                <input type="text" id="from" placeholder="Student name"/>
+                <input type="text" id="studentName" placeholder="Student name"/>
             </div>
             <br/>
             <div>
@@ -97,10 +107,11 @@
                 <c:forEach items="${questions}" var="question">
                     <h5>${question.description}</h5>
                     <c:forEach items="${question.answers}" var="answer">
-                        <input type="radio" name="${question.id}" value="${answer.answerValue}">  ${answer.description}<br>
+                        <input type="radio" name="${question.id}" value="${answer.answerValue}">  ${answer.description}
+                        <br>
                     </c:forEach>
                     <br>
-                    <button onclick="sendMessage();" id="answer_btn">Send Answer</button>
+                    <button onclick="sendMessage(${question.id});" id="answer_btn">Send Answer</button>
                     <br>
                 </c:forEach>
             </ul>
