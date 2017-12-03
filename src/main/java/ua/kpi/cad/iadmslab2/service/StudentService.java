@@ -9,6 +9,7 @@ import ua.kpi.cad.iadmslab2.entity.StudentAnswer;
 import ua.kpi.cad.iadmslab2.repository.StudentRepository;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,14 +18,30 @@ import java.util.Map;
 public class StudentService {
 
     private StudentRepository studentRepository;
+    private Map<String, Student> cache;
 
     @Autowired
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
+        cache = new HashMap<>();
     }
 
     public List<Student> findAllStudents() {
         return studentRepository.findAll();
+    }
+
+    public Student findStudentByName(String name) {
+        Student student = cache.get(name);
+
+        if (student == null) {
+            student = studentRepository.findByName(name);
+        }
+
+        if (student == null) {
+            student = studentRepository.save(new Student(name));
+        }
+
+        return student;
     }
 
     public Student saveStudentTotalMark(Map<StudentAnswer, Double> answersWithComplexities) {

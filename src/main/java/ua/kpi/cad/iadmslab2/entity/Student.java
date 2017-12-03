@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "student")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -24,4 +24,8 @@ public class Student {
 
     @Column(name = "mark")
     private Double totalMark;
+
+    public Student(String name) {
+        this.name = name;
+    }
 }

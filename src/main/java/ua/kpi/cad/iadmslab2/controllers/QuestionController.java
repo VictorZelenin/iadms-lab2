@@ -28,11 +28,4 @@ public class QuestionController {
     public List<Question> getAllQuestions() {
         return questionService.findAllQuestions();
     }
-
-    @MessageMapping("/test")
-    @SendTo("/topic/test")
-    public Question send(Integer id) {
-        // add each answer to list, if certain user answered on each question -> calculate total result and save to db
-        return questionService.findQuestionById(id);
-    }
 }

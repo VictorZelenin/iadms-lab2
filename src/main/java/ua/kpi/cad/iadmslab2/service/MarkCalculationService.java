@@ -8,6 +8,7 @@ import ua.kpi.cad.iadmslab2.entity.StudentAnswer;
 import ua.kpi.cad.iadmslab2.repository.QuestionRepository;
 import ua.kpi.cad.iadmslab2.repository.StudentAnswersRepository;
 
+import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class MarkCalculationService {
         this.questionRepository = questionRepository;
     }
 
+    @Transactional
     public Double calculateMarkComplexity(Integer studentId, Integer questionId, Double selectedValue) {
         List<StudentAnswer> answers = answersRepository.findAllByPkQuestionIdOrderByAnswerTimeDesc(questionId);
         long questionsCount = questionRepository.count();

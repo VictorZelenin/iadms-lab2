@@ -6,21 +6,11 @@
 
 <html lang="en">
 <head>
-
-    <!-- Access the bootstrap Css like this,
-        Spring boot will handle the resource mapping automcatically -->
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
-
-    <%--<spring:url value="/css/main.css" var="springCss"/>--%>
-    <%--<link href="${springCss}" rel="stylesheet"/>--%>
-
-    <%--<c:url value="/css/main.css" var="jstlCss" />--%>
-    <%--<link href="${jstlCss}" rel="stylesheet"/>--%>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
     <script type="text/javascript">
         var stompClient = null;
 
@@ -44,18 +34,19 @@
         }
 
         function disconnect() {
-            if (stompClient != null) {
+            if (stompClient !== null) {
                 stompClient.disconnect();
             }
+
             setConnected(false);
             console.log("Disconnected");
         }
 
         function sendMessage() {
-            var from = document.getElementById('from').value; // u_id
-            var text = document.getElementById('text').value; // q_id
+//            var from = document.getElementById('from').value; // u_id username??
+//            var text = document.getElementById('text').value; // q_id
             // also need -> val
-            stompClient.send("/app/test", {}, text);
+            stompClient.send("/app/test", {}, JSON.stringify({'studentName': 'Mike', 'questionId': 2, 'answerValue': 0.4}));
         }
 
         function showMessageOut(message) {
@@ -106,10 +97,10 @@
                 <c:forEach items="${questions}" var="question">
                     <h5>${question.description}</h5>
                     <c:forEach items="${question.answers}" var="answer">
-                        <input type="radio" name="${question.id}" value="${answer.answerValue}"> ${answer.description}<br>
+                        <input type="radio" name="${question.id}" value="${answer.answerValue}">  ${answer.description}<br>
                     </c:forEach>
                     <br>
-                    <button id="answer_btn">Send Answer</button>
+                    <button onclick="sendMessage();" id="answer_btn">Send Answer</button>
                     <br>
                 </c:forEach>
             </ul>
