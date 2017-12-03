@@ -11,11 +11,11 @@
         Spring boot will handle the resource mapping automcatically -->
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
 
-    <spring:url value="/css/main.css" var="springCss"/>
-    <link href="${springCss}" rel="stylesheet"/>
+    <%--<spring:url value="/css/main.css" var="springCss"/>--%>
+    <%--<link href="${springCss}" rel="stylesheet"/>--%>
 
     <%--<c:url value="/css/main.css" var="jstlCss" />--%>
-    <link href="${jstlCss}" rel="stylesheet"/>
+    <%--<link href="${jstlCss}" rel="stylesheet"/>--%>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
@@ -83,38 +83,44 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container-fluid">
 
-    <div class="starter-template">
-        <h1>Spring Boot Web JSP Example</h1>
-        <h2>Message: ${name}</h2>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-5">
+            <div>
+                <input type="text" id="from" placeholder="Student name"/>
+            </div>
+            <br/>
+            <div>
+                <button id="connect" class="btn" onclick="connect();">Start Testing</button>
+                <button id="disconnect" class="btn" disabled="disabled" onclick="disconnect();">
+                    Exit
+                </button>
+            </div>
+        </div>
     </div>
+    <div>
+        <br/>
+        <div id="conversationDiv">
+            <ul>
+                <c:forEach items="${questions}" var="question">
+                    <h5>${question.description}</h5>
+                    <c:forEach items="${question.answers}" var="answer">
+                        <input type="radio" name="${question.id}" value="${answer.answerValue}"> ${answer.description}<br>
+                    </c:forEach>
+                    <br>
+                    <button id="answer_btn">Send Answer</button>
+                    <br>
+                </c:forEach>
+            </ul>
 
-    <ul>
-        <c:forEach items="${questions}" var="item">
-            <p>${item.description}</p>
-        </c:forEach>
-    </ul>
+            <%--<input type="text" id="text" placeholder="Write a message..."/>--%>
+            <%--<button id="sendMessage" onclick="sendMessage();">Send</button>--%>
+            <%--<p id="response"></p>--%>
+        </div>
+    </div>
 </div>
 
-<div>
-    <div>
-        <input type="text" id="from" placeholder="Student name"/>
-    </div>
-    <br/>
-    <div>
-        <button id="connect" onclick="connect();">Start Testing</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">
-            Exit
-        </button>
-    </div>
-    <br/>
-    <div id="conversationDiv">
-        <input type="text" id="text" placeholder="Write a message..."/>
-        <button id="sendMessage" onclick="sendMessage();">Send</button>
-        <p id="response"></p>
-    </div>
-</div>
 
 <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 

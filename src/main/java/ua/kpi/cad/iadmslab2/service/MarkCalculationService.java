@@ -29,6 +29,7 @@ public class MarkCalculationService {
         List<StudentAnswer> answers = answersRepository.findAllByPkQuestionIdOrderByAnswerTimeDesc(questionId);
         long questionsCount = questionRepository.count();
 
+
         StudentAnswer answer = findStudentAnswer(answers, studentId);
 
         // save new answer. (student_id, question_id, new_complexity, selectedValue)
@@ -53,7 +54,9 @@ public class MarkCalculationService {
     }
 
     private StudentAnswer findStudentAnswer(List<StudentAnswer> answers, Integer studentId) {
-        Optional<StudentAnswer> optionalAnswer = answers.stream().filter(answer -> !answer.getStudent().getId().equals(studentId)).findFirst();
+        Optional<StudentAnswer> optionalAnswer = answers.stream()
+                .filter(answer -> !answer.getStudent().getId().equals(studentId))
+                .findFirst();
 
         if (!optionalAnswer.isPresent()) {
             throw new IllegalStateException("Could not find appropriate answer");
