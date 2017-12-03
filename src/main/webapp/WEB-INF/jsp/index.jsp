@@ -17,8 +17,7 @@
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
             document.getElementById('disconnect').disabled = !connected;
-            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-            document.getElementById('response').innerHTML = '';
+            document.getElementById('main').style.visibility = connected ? 'visible' : 'hidden';
         }
 
         function connect() {
@@ -28,7 +27,7 @@
                 setConnected(true);
                 console.log("Connected: " + frame);
                 stompClient.subscribe("/topic/test", function (message) {
-                    showMessageOut(JSON.parse(message.body));
+                    showMessageOut(message.body);
                 });
             })
         }
@@ -46,11 +45,11 @@
             var studentName = document.getElementById('studentName').value;
             var answerValue = document.querySelector('input[name = "' + id + '"]:checked').value;
 
-            stompClient.send("/app/test", {}, JSON.stringify(
+            stompClient.send("/app/test", {}, JSON.stringify( // TODO: count a number of send messages, and then send final msg.
                 {
                     'studentName': studentName,
                     'questionId': id,
-                    'answerValue': answerValue
+                    'answerValue': answerValue // TODO: should be id of answer value
                 })
             );
         }
@@ -59,12 +58,8 @@
             var response = document.getElementById('response');
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(message.text));
+            p.appendChild(document.createTextNode(message)); // TODO: make pop-up menu
             response.appendChild(p);
-        }
-
-        function find() {
-
         }
     </script>
 </head>
@@ -102,7 +97,7 @@
     </div>
     <div>
         <br/>
-        <div id="conversationDiv">
+        <div id="main">
             <ul>
                 <c:forEach items="${questions}" var="question">
                     <h5>${question.description}</h5>
@@ -114,11 +109,8 @@
                     <button onclick="sendMessage(${question.id});" id="answer_btn">Send Answer</button>
                     <br>
                 </c:forEach>
+                <div id="response"></div>
             </ul>
-
-            <%--<input type="text" id="text" placeholder="Write a message..."/>--%>
-            <%--<button id="sendMessage" onclick="sendMessage();">Send</button>--%>
-            <%--<p id="response"></p>--%>
         </div>
     </div>
 </div>

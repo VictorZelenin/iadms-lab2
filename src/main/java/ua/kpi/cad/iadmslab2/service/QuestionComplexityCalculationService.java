@@ -15,28 +15,31 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class MarkCalculationService {
+public class QuestionComplexityCalculationService {
 
     private final StudentAnswersRepository answersRepository;
     private final QuestionRepository questionRepository;
 
     @Autowired
-    public MarkCalculationService(StudentAnswersRepository answersRepository, QuestionRepository questionRepository) {
+    public QuestionComplexityCalculationService(StudentAnswersRepository answersRepository, QuestionRepository questionRepository) {
         this.answersRepository = answersRepository;
         this.questionRepository = questionRepository;
     }
 
     @Transactional
-    public Double calculateMarkComplexity(Integer studentId, Integer questionId, Double selectedValue) {
+    public Double calculateQuestionComplexity(Integer studentId, Integer questionId, Double selectedValue) {
         List<StudentAnswer> answers = answersRepository.findAllByPkQuestionIdOrderByAnswerTimeDesc(questionId);
         long questionsCount = questionRepository.count();
 
 
         StudentAnswer answer = findStudentAnswer(answers, studentId);
 
-        // save new answer. (student_id, question_id, new_complexity, selectedValue)
+        Double questionComplexity = recalculateComplexity(answer, questionsCount);
+        log.debug("New complexity of question {}: {}", answer.getPk().getQuestion().getDescription(), questionComplexity);
 
-        return recalculateComplexity(answer, questionsCount);
+        // TODO: save student answer -> save new answer. (student_id, question_id, new_complexity, selectedValue, time)
+
+        return questionComplexity;
     }
 
     private Double recalculateComplexity(StudentAnswer answer, long numberOfQuestions) {

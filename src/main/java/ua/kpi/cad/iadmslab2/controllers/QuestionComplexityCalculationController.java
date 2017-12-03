@@ -7,19 +7,21 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import ua.kpi.cad.iadmslab2.entity.AnswerMessage;
 import ua.kpi.cad.iadmslab2.entity.Student;
-import ua.kpi.cad.iadmslab2.service.MarkCalculationService;
+import ua.kpi.cad.iadmslab2.service.QuestionComplexityCalculationService;
 import ua.kpi.cad.iadmslab2.service.StudentService;
+
+import java.util.Map;
 
 @RequestMapping("/calculate")
 @RestController
 @Slf4j
-public class MarkCalculationController {
+public class QuestionComplexityCalculationController {
 
-    private MarkCalculationService calculationService;
+    private QuestionComplexityCalculationService calculationService;
     private StudentService studentService;
 
     @Autowired
-    public MarkCalculationController(MarkCalculationService calculationService, StudentService studentService) {
+    public QuestionComplexityCalculationController(QuestionComplexityCalculationService calculationService, StudentService studentService) {
         this.calculationService = calculationService;
         this.studentService = studentService;
     }
@@ -29,6 +31,11 @@ public class MarkCalculationController {
     public Double recalculateQuestionComplexity(AnswerMessage message) {
         Student student = studentService.findStudentByName(message.getStudentName());
 
-        return calculationService.calculateMarkComplexity(student.getId(), message.getQuestionId(), message.getAnswerValue());
+        return calculationService.calculateQuestionComplexity(student.getId(), message.getQuestionId(), message.getAnswerValue());
+    }
+
+    public Double calculateTotalMarkForStudent(String studentName, Map<Integer, Double> questionAnswers) {
+        // TODO: implement
+        return 0.0;
     }
 }

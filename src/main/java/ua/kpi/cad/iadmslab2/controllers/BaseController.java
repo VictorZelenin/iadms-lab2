@@ -19,7 +19,6 @@ public class BaseController {
 
     @GetMapping("/")
     public String index(Map<String, Object> model) {
-        model.put("name", "test_user111");
         model.put("questions", service.findAllQuestions());
 
         return "index";
