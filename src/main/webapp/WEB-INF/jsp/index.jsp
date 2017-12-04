@@ -13,6 +13,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
         var stompClient = null;
+        var answeredQuestionsNum = 0;
 
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
@@ -45,6 +46,8 @@
             var studentName = document.getElementById('studentName').value;
             var answerValue = document.querySelector('input[name = "' + id + '"]:checked').value;
 
+            answeredQuestionsNum++;
+
             stompClient.send("/app/test", {}, JSON.stringify( // TODO: count a number of send messages, and then send final msg.
                 {
                     'studentName': studentName,
@@ -52,6 +55,14 @@
                     'answerValue': answerValue // TODO: should be id of answer value
                 })
             );
+
+            if (answeredQuestionsNum == totalQuestionsNum()) {
+                console.log("Kabooom!"); // TODO: now here can be placed final request
+            }
+        }
+
+        function totalQuestionsNum() {
+            return document.getElementsByTagName("h5").length;
         }
 
         function showMessageOut(message) {
