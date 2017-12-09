@@ -8,10 +8,8 @@ import ua.kpi.cad.iadmslab2.entity.Student;
 import ua.kpi.cad.iadmslab2.entity.StudentAnswer;
 import ua.kpi.cad.iadmslab2.repository.StudentRepository;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -44,31 +42,35 @@ public class StudentService {
         return student;
     }
 
-    public Student saveStudentTotalMark(Map<StudentAnswer, Double> answersWithComplexities) {
-        Double max = findSumOfBestAnswers(answersWithComplexities);
-        Double answeredVal = getSumOfStudentAnswers(answersWithComplexities);
+    public Student saveStudentTotalMark(List<StudentAnswer> answers) {
+        Double max = findSumOfBestAnswers(answers);
+        Double answeredVal = getSumOfStudentAnswers(answers);
         Double totalMark = answeredVal / max;
 
-        Student student = answersWithComplexities.keySet().iterator().next().getStudent();
+        Student student = answers.get(0).getStudent();
 
-        student.setTotalMark(totalMark);
+        student.setTotalMark(formatDecimalWithPrecision(totalMark));
 
         return studentRepository.save(student);
     }
 
-    private Double findSumOfBestAnswers(Map<StudentAnswer, Double> answers) {
-        return answers.entrySet().stream()
-                .map(entry -> entry.getKey().getQuestion().getAnswers().stream()
+    private Double findSumOfBestAnswers(List<StudentAnswer> answers) {
+        return answers.stream()
+                .map(answer -> answer.getQuestion().getAnswers().stream()
                         .map(QuestionAnswer::getAnswerValue)
-                        .max(Comparator.naturalOrder()).orElse(0.0) * entry.getValue())
+                        .max(Comparator.naturalOrder()).orElse(0.0) * answer.getQuestionComplexity())
                 .mapToDouble(d -> d)
                 .sum();
     }
 
-    private Double getSumOfStudentAnswers(Map<StudentAnswer, Double> answers) {
-        return answers.entrySet().stream()
-                .map(entry -> entry.getValue() * entry.getKey().getAnswerValue())
+    private Double getSumOfStudentAnswers(List<StudentAnswer> answers) {
+        return answers.stream()
+                .map(answer -> answer.getAnswerValue() * answer.getQuestion().getComplexity())
                 .mapToDouble(d -> d)
                 .sum();
+    }
+
+    private Double formatDecimalWithPrecision(Double d) {
+        return Double.parseDouble(new DecimalFormat("#0.00").format(d));
     }
 }

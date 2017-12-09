@@ -14,11 +14,15 @@
     <script type="text/javascript">
         var stompClient = null;
         var answeredQuestionsNum = 0;
+        var map = {};
 
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
             document.getElementById('disconnect').disabled = !connected;
             document.getElementById('main').style.visibility = connected ? 'visible' : 'hidden';
+            for (var obj in document.getElementsByTagName("button")) {
+                obj.disabled = false;
+            }
         }
 
         function connect() {
@@ -29,6 +33,9 @@
                 console.log("Connected: " + frame);
                 stompClient.subscribe("/topic/test", function (message) {
                     showMessageOut(message.body);
+                });
+                stompClient.subscribe("/topic/result", function (message) {
+                    console.log(message);
                 });
             })
         }
@@ -45,10 +52,11 @@
         function sendMessage(id) {
             var studentName = document.getElementById('studentName').value;
             var answerValue = document.querySelector('input[name = "' + id + '"]:checked').value;
+            document.getElementsByName('btn-' + id)[0].disabled = true;
 
             answeredQuestionsNum++;
 
-            stompClient.send("/app/test", {}, JSON.stringify( // TODO: count a number of send messages, and then send final msg.
+            stompClient.send("/app/test", {}, JSON.stringify(
                 {
                     'studentName': studentName,
                     'questionId': id,
@@ -56,8 +64,16 @@
                 })
             );
 
-            if (answeredQuestionsNum == totalQuestionsNum()) {
-                console.log("Kabooom!"); // TODO: now here can be placed final request
+            map[id] = answerValue;
+
+            if (answeredQuestionsNum === totalQuestionsNum()) {
+                // send to different controller
+                stompClient.send("/app/result", {}, JSON.stringify(
+                    {
+                        'studentName': studentName,
+                        'questionAnswers': map
+                    })
+                );
             }
         }
 
