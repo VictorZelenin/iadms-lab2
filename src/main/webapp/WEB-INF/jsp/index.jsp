@@ -35,7 +35,7 @@
                     showMessageOut(message.body);
                 });
                 stompClient.subscribe("/topic/result", function (message) {
-                    console.log(message);
+                    document.getElementById('main').innerHTML = "Your result is " + message.body;
                 });
             })
         }
@@ -133,7 +133,9 @@
                         <br>
                     </c:forEach>
                     <br>
-                    <button onclick="sendMessage(${question.id});" id="answer_btn">Send Answer</button>
+                    <button onclick="sendMessage(${question.id});" class="btn" name="btn-${question.id}"
+                            id="answer_btn">Send Answer
+                    </button>
                     <br>
                 </c:forEach>
                 <div id="response"></div>
