@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="../../jquery.bootstrap-growl.min.js"></script>
     <script type="text/javascript">
         var stompClient = null;
         var answeredQuestionsNum = 0;
@@ -32,7 +33,11 @@
                 setConnected(true);
                 console.log("Connected: " + frame);
                 stompClient.subscribe("/topic/test", function (message) {
-                    showMessageOut(message.body);
+                    var question = JSON.parse(message.body);
+                    $.bootstrapGrowl("Question: " + question['description'] + "</br></br>New complexity:" + question['complexity'], {
+                        width: 350,
+                        delay: 2500
+                    });
                 });
                 stompClient.subscribe("/topic/result", function (message) {
                     document.getElementById('main').innerHTML = "Your result is " + message.body;

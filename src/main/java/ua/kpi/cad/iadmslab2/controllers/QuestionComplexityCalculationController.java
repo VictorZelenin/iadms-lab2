@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
+import ua.kpi.cad.iadmslab2.entity.Question;
 import ua.kpi.cad.iadmslab2.entity.StudentAnswer;
 import ua.kpi.cad.iadmslab2.entity.message.AnswerMessage;
 import ua.kpi.cad.iadmslab2.entity.Student;
@@ -32,7 +33,7 @@ public class QuestionComplexityCalculationController {
 
     @MessageMapping("/test")
     @SendTo("/topic/test")
-    public Double recalculateQuestionComplexity(AnswerMessage message) {
+    public Question recalculateQuestionComplexity(AnswerMessage message) {
         Student student = studentService.findStudentByName(message.getStudentName());
 
         return calculationService.calculateQuestionComplexity(student.getId(), message.getQuestionId(), message.getAnswerValue());

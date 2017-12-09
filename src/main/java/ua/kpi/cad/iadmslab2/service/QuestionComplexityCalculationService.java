@@ -24,7 +24,7 @@ public class QuestionComplexityCalculationService {
     }
 
     @Transactional
-    public Double calculateQuestionComplexity(Integer studentId, Integer questionId, Double selectedValue) {
+    public Question calculateQuestionComplexity(Integer studentId, Integer questionId, Double selectedValue) {
         List<StudentAnswer> answers = answersRepository.findAllByPkQuestionIdOrderByAnswerTimeDesc(questionId);
         long questionsCount = questionRepository.count();
 
@@ -37,7 +37,7 @@ public class QuestionComplexityCalculationService {
 
         updateQuestionComplexity(answer.getQuestion(), questionComplexity);
 
-        return questionComplexity;
+        return answer.getQuestion();
     }
 
     public List<StudentAnswer> getStudentAnswers(Student student) {
