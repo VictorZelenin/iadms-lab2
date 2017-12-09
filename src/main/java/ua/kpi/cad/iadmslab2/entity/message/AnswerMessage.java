@@ -1,4 +1,4 @@
-package ua.kpi.cad.iadmslab2.entity;
+package ua.kpi.cad.iadmslab2.entity.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

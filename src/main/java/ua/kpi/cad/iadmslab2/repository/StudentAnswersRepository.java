@@ -11,4 +11,6 @@ public interface StudentAnswersRepository extends JpaRepository<StudentAnswer, I
     StudentAnswer findFirstByOrderByAnswerTimeDesc();
 
     List<StudentAnswer> findAllByPkQuestionIdOrderByAnswerTimeDesc(int id);
+
+    List<StudentAnswer> findStudentAnswerByPkStudentId(int id);
 }

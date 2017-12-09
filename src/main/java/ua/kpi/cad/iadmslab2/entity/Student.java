@@ -25,6 +25,10 @@ public class Student {
     @Column(name = "mark")
     private Double totalMark;
 
+    public Student(Integer id) {
+        this.id = id;
+    }
+
     public Student(String name) {
         this.name = name;
     }

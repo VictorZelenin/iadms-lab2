@@ -11,14 +11,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="../../jquery.bootstrap-growl.min.js"></script>
     <script type="text/javascript">
         var stompClient = null;
         var answeredQuestionsNum = 0;
+        var map = {};
 
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
             document.getElementById('disconnect').disabled = !connected;
             document.getElementById('main').style.visibility = connected ? 'visible' : 'hidden';
+            for (var obj in document.getElementsByTagName("button")) {
+                obj.disabled = false;
+            }
         }
 
         function connect() {
@@ -28,7 +33,14 @@
                 setConnected(true);
                 console.log("Connected: " + frame);
                 stompClient.subscribe("/topic/test", function (message) {
-                    showMessageOut(message.body);
+                    var question = JSON.parse(message.body);
+                    $.bootstrapGrowl("Question: " + question['description'] + "</br></br>New complexity:" + question['complexity'], {
+                        width: 350,
+                        delay: 2500
+                    });
+                });
+                stompClient.subscribe("/topic/result", function (message) {
+                    document.getElementById('main').innerHTML = "Your result is " + message.body;
                 });
             })
         }
@@ -45,10 +57,11 @@
         function sendMessage(id) {
             var studentName = document.getElementById('studentName').value;
             var answerValue = document.querySelector('input[name = "' + id + '"]:checked').value;
+            document.getElementsByName('btn-' + id)[0].disabled = true;
 
             answeredQuestionsNum++;
 
-            stompClient.send("/app/test", {}, JSON.stringify( // TODO: count a number of send messages, and then send final msg.
+            stompClient.send("/app/test", {}, JSON.stringify(
                 {
                     'studentName': studentName,
                     'questionId': id,
@@ -56,8 +69,16 @@
                 })
             );
 
-            if (answeredQuestionsNum == totalQuestionsNum()) {
-                console.log("Kabooom!"); // TODO: now here can be placed final request
+            map[id] = answerValue;
+
+            if (answeredQuestionsNum === totalQuestionsNum()) {
+                // send to different controller
+                stompClient.send("/app/result", {}, JSON.stringify(
+                    {
+                        'studentName': studentName,
+                        'questionAnswers': map
+                    })
+                );
             }
         }
 
@@ -117,7 +138,9 @@
                         <br>
                     </c:forEach>
                     <br>
-                    <button onclick="sendMessage(${question.id});" id="answer_btn">Send Answer</button>
+                    <button onclick="sendMessage(${question.id});" class="btn" name="btn-${question.id}"
+                            id="answer_btn">Send Answer
+                    </button>
                     <br>
                 </c:forEach>
                 <div id="response"></div>
